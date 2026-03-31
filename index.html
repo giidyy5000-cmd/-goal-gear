@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Goal Gear</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background-color: #e6ffe6;
+    }
+    button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>⚽ Goal Gear</h1>
+  <p>The best soccer gear for players</p>
+
+  <button onclick="add('Shin Guards', 20)">Shin Guards ($20)</button>
+  <button onclick="add('Goalie Gloves', 35)">Goalie Gloves ($35)</button>
+  <button onclick="add('Cleats', 60)">Cleats ($60)</button>
+
+  <h2>🛒 Cart</h2>
+  <p id="cart">Empty</p>
+  <p id="total">$0</p>
+
+  <button onclick="buy()">Buy Now</button>
+
+  <script>
+    var cart = [];
+    var total = 0;
+
+    function add(item, price) {
+      cart.push(item);
+      total += price;
+      document.getElementById("cart").innerText = cart.join(", ");
+      document.getElementById("total").innerText = "$" + total;
+    }
+
+    function buy() {
+      alert("Thanks for shopping at Goal Gear!\nTotal: $" + total);
+      cart = [];
+      total = 0;
+      document.getElementById("cart").innerText = "Empty";
+      document.getElementById("total").innerText = "$0";
+    }
+  </script>
+</body>
+</html>
