@@ -75,4 +75,67 @@
 <div class="store">
 
   <div class="item">
+    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf">
+    <h3>Shin Guards</h3>
+    <p>$20</p>
+    <button onclick="add('Shin Guards',20)">Add to Cart</button>
+  </div>
 
+  <div class="item">
+    <img src="https://images.unsplash.com/photo-1605351797709-11b4a59d3f79">
+    <h3>Goalie Gloves</h3>
+    <p>$35</p>
+    <button onclick="add('Goalie Gloves',35)">Add to Cart</button>
+  </div>
+
+  <div class="item">
+    <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d">
+    <h3>Cleats</h3>
+    <p>$60</p>
+    <button onclick="add('Cleats',60)">Add to Cart</button>
+  </div>
+
+  <div class="item">
+    <img src="https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a">
+    <h3>Soccer Ball</h3>
+    <p>$25</p>
+    <button onclick="add('Soccer Ball',25)">Add to Cart</button>
+  </div>
+
+</div>
+
+<div class="cart">
+  <h2>🛒 Cart</h2>
+  <p id="cart">Empty</p>
+  <p>Items Total: $<span id="items">0</span></p>
+  <p>Shipping: $10</p>
+  <p><b>Total: $<span id="total">0</span></b></p>
+  <button onclick="buy()">Buy Now</button>
+</div>
+
+<script>
+  var cart = [];
+  var itemsTotal = 0;
+  var shipping = 10;
+
+  function add(item, price) {
+    cart.push(item);
+    itemsTotal += price;
+    document.getElementById("cart").innerText = cart.join(", ");
+    document.getElementById("items").innerText = itemsTotal;
+    document.getElementById("total").innerText = itemsTotal + shipping;
+  }
+
+  function buy() {
+    alert("Order placed!\nTotal: $" + (itemsTotal + shipping));
+    cart = [];
+    itemsTotal = 0;
+    document.getElementById("cart").innerText = "Empty";
+    document.getElementById("items").innerText = 0;
+    document.getElementById("total").innerText = 0;
+  }
+</script>
+
+</body>
+</html>
+``
