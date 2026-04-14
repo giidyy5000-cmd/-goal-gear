@@ -6,35 +6,37 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #1db954, #0b6623);
-      color: white;
-      text-align: center;
-      padding: 20px;
+      margin: 0;
+      background: #f4f4f4;
     }
 
-    h1 {
-      font-size: 36px;
+    header {
+      background: #0b6623;
+      color: white;
+      padding: 20px;
+      text-align: center;
     }
 
     .store {
-      display: flex;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
-      margin-top: 30px;
-      flex-wrap: wrap;
+      padding: 20px;
     }
 
     .item {
       background: white;
-      color: black;
-      width: 200px;
-      padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 15px;
+      text-align: center;
     }
 
-    .item:hover {
-      transform: scale(1.05);
+    .item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
     }
 
     button {
@@ -50,70 +52,27 @@
     }
 
     button:hover {
-      background: #169c46;
+      background: #159143;
     }
 
     .cart {
-      margin-top: 30px;
-      background: rgba(255,255,255,0.15);
-      padding: 15px;
+      background: white;
+      margin: 20px;
+      padding: 20px;
       border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 
 <body>
 
+<header>
   <h1>⚽ Goal Gear</h1>
-  <p>Your one‑stop shop for soccer essentials</p>
+  <p>Soccer equipment built for every player</p>
+</header>
 
-  <div class="store">
-    <div class="item">
-      <h3>Shin Guards</h3>
-      <p>$20</p>
-      <button onclick="add('Shin Guards',20)">Add to Cart</button>
-    </div>
+<div class="store">
 
-    <div class="item">
-      <h3>Goalie Gloves</h3>
-      <p>$35</p>
-      <button onclick="add('Goalie Gloves',35)">Add to Cart</button>
-    </div>
+  <div class="item">
 
-    <div class="item">
-      <h3>Cleats</h3>
-      <p>$60</p>
-      <button onclick="add('Cleats',60)">Add to Cart</button>
-    </div>
-  </div>
-
-  <div class="cart">
-    <h2>🛒 Cart</h2>
-    <p id="cart">Empty</p>
-    <p id="total">$0</p>
-    <button onclick="buy()">Buy Now</button>
-  </div>
-
-  <script>
-    var cart = [];
-    var total = 0;
-
-    function add(item, price) {
-      cart.push(item);
-      total += price;
-      document.getElementById("cart").innerText = cart.join(", ");
-      document.getElementById("total").innerText = "$" + total;
-    }
-
-    function buy() {
-      alert("Thanks for shopping at Goal Gear!\nTotal: $" + total);
-      cart = [];
-      total = 0;
-      document.getElementById("cart").innerText = "Empty";
-      document.getElementById("total").innerText = "$0";
-    }
-  </script>
-
-</body>
-</html>
-``
