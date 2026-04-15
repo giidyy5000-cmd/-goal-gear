@@ -1,147 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tech Troubleshooting Jeopardy</title>
+<meta charset="UTF-8">
+<title>Tech Troubleshooting Jeopardy</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: white;
+  text-align: center;
+}
 
-    <style>
-        body {
-            font-family: Arial;
-            background-color: #0a0a0a;
-            color: white;
-            text-align: center;
-        }
+h1 {
+  padding: 20px;
+  font-size: 2.5em;
+  text-shadow: 2px 2px 5px black;
+}
 
-        h1 {
-            color: gold;
-        }
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  padding: 20px;
+  max-width: 1000px;
+  margin: auto;
+}
 
-        .board {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            width: 80%;
-            margin: auto;
-        }
+.category {
+  background: #111;
+  padding: 10px;
+  font-weight: bold;
+  border-radius: 8px;
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+}
 
-        .cell {
-            background: #1e90ff;
-            padding: 20px;
-            cursor: pointer;
-            border-radius: 8px;
-            font-weight: bold;
-        }
+.cell {
+  background: #222;
+  padding: 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: 0.2s;
+  background: linear-gradient(45deg, #00c6ff, #0072ff);
+}
 
-        .cell:hover {
-            background: gold;
-            color: black;
-        }
+.cell:hover {
+  transform: scale(1.05);
+}
 
-        .box {
-            margin: 20px auto;
-            width: 70%;
-            background: #222;
-            padding: 20px;
-            border-radius: 10px;
-        }
+.used {
+  background: gray !important;
+  cursor: not-allowed;
+}
 
-        button {
-            padding: 10px;
-            margin: 5px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-        }
+#popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #111;
+  padding: 30px;
+  border-radius: 12px;
+  display: none;
+  width: 60%;
+  box-shadow: 0 0 20px black;
+}
 
-        .correct { background: green; color: white; }
-        .wrong { background: red; color: white; }
-    </style>
+#answer {
+  margin-top: 20px;
+  color: #00ffcc;
+  display: none;
+  font-size: 1.3em;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+</style>
 </head>
-
 <body>
 
-<h1>💻 Tech Troubleshooting Jeopardy</h1>
+<h1>💻 Software Troubleshooting Jeopardy</h1>
 
-<h3 id="turn">Team 1 Turn</h3>
+<div class="board" id="board"></div>
 
-<div class="board">
-
-    <div class="cell" onclick="select(0)">Network<br>$100</div>
-    <div class="cell" onclick="select(1)">Hardware<br>$100</div>
-    <div class="cell" onclick="select(2)">Software<br>$100</div>
-    <div class="cell" onclick="select(3)">Security<br>$100</div>
-
-    <div class="cell" onclick="select(4)">Network<br>$200</div>
-    <div class="cell" onclick="select(5)">Hardware<br>$200</div>
-    <div class="cell" onclick="select(6)">Software<br>$200</div>
-    <div class="cell" onclick="select(7)">Security<br>$200</div>
-
-    <div class="cell" onclick="select(8)">Network<br>$300</div>
-    <div class="cell" onclick="select(9)">Hardware<br>$300</div>
-    <div class="cell" onclick="select(10)">Software<br>$300</div>
-    <div class="cell" onclick="select(11)">Security<br>$300</div>
-
-</div>
-
-<div class="box">
-    <h2 id="question">Pick a box to start</h2>
-
-    <button class="correct" onclick="correct()">Correct</button>
-    <button class="wrong" onclick="wrong()">Wrong</button>
-
-    <h3 id="score">Team 1: 0 | Team 2: 0</h3>
+<div id="popup">
+  <div id="question"></div>
+  <div id="answer"></div>
+  <button onclick="closePopup()">Close</button>
 </div>
 
 <script>
-let team = 1;
-let score1 = 0;
-let score2 = 0;
-let currentValue = 0;
+const gameData = {
+  "Windows": [
+    {q:"What do you press to open Task Manager?", a:"Ctrl + Shift + Esc"},
+    {q:"What tool checks system files?", a:"sfc /scannow"},
+    {q:"Command to check IP?", a:"ipconfig"},
+    {q:"Used to uninstall programs?", a:"Control Panel / Settings"},
+    {q:"Blue screen error is called?", a:"BSOD"}
+  ],
+  "Hardware": [
+    {q:"What connects CPU to motherboard?", a:"Socket"},
+    {q:"Device that stores data long-term?", a:"Hard Drive / SSD"},
+    {q:"What powers the PC?", a:"Power Supply (PSU)"},
+    {q:"What cools the CPU?", a:"Fan / Heatsink"},
+    {q:"Memory used while running programs?", a:"RAM"}
+  ],
+  "Networking": [
+    {q:"What device connects networks?", a:"Router"},
+    {q:"What does DNS do?", a:"Converts domain to IP"},
+    {q:"What is 192.168.x.x?", a:"Private IP address"},
+    {q:"WiFi stands for?", a:"Wireless Fidelity"},
+    {q:"What checks connection to another device?", a:"Ping"}
+  ],
+  "Software": [
+    {q:"What is an OS?", a:"Operating System"},
+    {q:"Example of open-source OS?", a:"Linux"},
+    {q:"What is a bug?", a:"Error in code/software"},
+    {q:"What fixes bugs?", a:"Patch / Update"},
+    {q:"What is antivirus for?", a:"Remove malware"}
+  ],
+  "Security": [
+    {q:"What is phishing?", a:"Fake emails stealing info"},
+    {q:"Strong password rule?", a:"Mix letters numbers symbols"},
+    {q:"What is malware?", a:"Malicious software"},
+    {q:"Two-factor authentication?", a:"Extra login security"},
+    {q:"What protects networks?", a:"Firewall"}
+  ]
+};
 
-let questions = [
-    "What should you do if WiFi is not working? (Restart router)",
-    "What fixes a frozen computer? (Restart system)",
-    "What causes slow PC? (Too many apps running)",
-    "What is phishing? (Fake emails stealing info)",
+let selectedAnswer = "";
 
-    "Why won’t a printer print? (No connection/paper)",
-    "What is a hardware issue? (Broken physical part)",
-    "What does RAM do? (Temporary memory)",
-    "What is a virus? (Malicious software)",
+function buildBoard() {
+  const board = document.getElementById("board");
 
-    "What fixes app crashing? (Update/reinstall app)",
-    "What is safe mode? (Diagnostic startup mode)",
-    "What is cache? (Temporary stored data)",
-    "How to remove malware? (Antivirus scan)"
-];
+  Object.keys(gameData).forEach(category => {
+    let catDiv = document.createElement("div");
+    catDiv.className = "category";
+    catDiv.innerText = category;
+    board.appendChild(catDiv);
+  });
 
-function select(index) {
-    document.getElementById("question").innerText = questions[index];
+  for (let i = 0; i < 5; i++) {
+    Object.keys(gameData).forEach(category => {
+      let cell = document.createElement("div");
+      cell.className = "cell";
+      cell.innerText = "$" + ((i + 1) * 100);
 
-    if (index < 4) currentValue = 100;
-    else if (index < 8) currentValue = 200;
-    else currentValue = 300;
+      cell.onclick = function () {
+        if (cell.classList.contains("used")) return;
+
+        let item = gameData[category][i];
+        document.getElementById("question").innerText = item.q;
+        document.getElementById("answer").innerText = "Answer: " + item.a;
+        document.getElementById("answer").style.display = "none";
+        selectedAnswer = item.a;
+
+        document.getElementById("popup").style.display = "block";
+        cell.classList.add("used");
+      };
+
+      board.appendChild(cell);
+    });
+  }
 }
 
-function correct() {
-    if (team === 1) score1 += currentValue;
-    else score2 += currentValue;
-
-    nextTurn();
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
 }
 
-function wrong() {
-    nextTurn();
-}
+document.addEventListener("keydown", function(e) {
+  if (e.code === "Space") {
+    document.getElementById("answer").style.display = "block";
+  }
+});
 
-function nextTurn() {
-    team = team === 1 ? 2 : 1;
-
-    document.getElementById("turn").innerText = "Team " + team + " Turn";
-    document.getElementById("score").innerText =
-        "Team 1: " + score1 + " | Team 2: " + score2;
-
-    document.getElementById("question").innerText = "Pick another box";
-}
+buildBoard();
 </script>
 
 </body>
