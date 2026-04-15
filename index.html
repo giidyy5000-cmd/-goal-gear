@@ -2,93 +2,171 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Tech Troubleshooting Jeopardy</title>
+<title>CompTIA 1201 Software Troubleshooting Jeopardy</title>
+
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  font-family: Arial;
+  background: linear-gradient(135deg, #141e30, #243b55);
   color: white;
   text-align: center;
 }
 
-h1 {
-  padding: 20px;
-  font-size: 2.5em;
-  text-shadow: 2px 2px 5px black;
+/* LOGIN SCREEN */
+#loginScreen {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #0b0f1a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
 }
 
+.login-box {
+  background: rgba(255,255,255,0.08);
+  padding: 25px;
+  border-radius: 12px;
+}
+
+input {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 6px;
+  border: none;
+}
+
+/* GAME */
+#game {
+  display: none;
+}
+
+h1 {
+  margin: 10px;
+}
+
+/* SCOREBOARD */
+.scoreboard {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  font-size: 1.2em;
+  margin: 10px;
+}
+
+.team-box {
+  background: rgba(255,255,255,0.1);
+  padding: 10px;
+  border-radius: 10px;
+  min-width: 180px;
+}
+
+button {
+  margin: 3px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.plus { background: #00c853; color: white; }
+.minus { background: #d50000; color: white; }
+
+/* BOARD */
 .board {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  gap: 8px;
   padding: 20px;
   max-width: 1000px;
   margin: auto;
 }
 
 .category {
-  background: #111;
+  background: linear-gradient(45deg, #ff9800, #ff5722);
   padding: 10px;
   font-weight: bold;
   border-radius: 8px;
-  background: linear-gradient(45deg, #ff416c, #ff4b2b);
 }
 
 .cell {
-  background: #222;
+  background: linear-gradient(45deg, #2196f3, #00bcd4);
   padding: 25px;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 1.2em;
-  transition: 0.2s;
-  background: linear-gradient(45deg, #00c6ff, #0072ff);
 }
 
-.cell:hover {
-  transform: scale(1.05);
+.cell.used {
+  background: gray;
+  pointer-events: none;
 }
 
-.used {
-  background: gray !important;
-  cursor: not-allowed;
-}
-
+/* POPUP */
 #popup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #111;
-  padding: 30px;
-  border-radius: 12px;
-  display: none;
+  padding: 25px;
+  border-radius: 10px;
   width: 60%;
-  box-shadow: 0 0 20px black;
+  display: none;
+  z-index: 5;
 }
 
 #answer {
-  margin-top: 20px;
+  margin-top: 15px;
   color: #00ffcc;
   display: none;
-  font-size: 1.3em;
-}
-
-button {
-  margin-top: 15px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
 }
 </style>
 </head>
+
 <body>
 
-<h1>💻 Software Troubleshooting Jeopardy</h1>
+<!-- 🔐 LOGIN -->
+<div id="loginScreen">
+  <h1>🔐 CompTIA Jeopardy Login</h1>
+
+  <div class="login-box">
+    <input id="team1Input" placeholder="Enter Team 1 Name">
+    <br>
+    <input id="team2Input" placeholder="Enter Team 2 Name">
+    <br><br>
+    <button onclick="startGame()">Start Game</button>
+  </div>
+</div>
+
+<!-- 🎮 GAME -->
+<div id="game">
+
+<h1>💻 CompTIA 1201 Software Troubleshooting Jeopardy</h1>
+
+<div class="scoreboard">
+  <div class="team-box">
+    <div id="name1">Team 1</div>
+    Score: <span id="p1">0</span><br>
+    <button class="plus" onclick="addScore(1,100)">+100</button>
+    <button class="minus" onclick="addScore(1,-100)">-100</button>
+  </div>
+
+  <div class="team-box">
+    <div id="name2">Team 2</div>
+    Score: <span id="p2">0</span><br>
+    <button class="plus" onclick="addScore(1,100)">+100</button>
+    <button class="minus" onclick="addScore(1,-100)">-100</button>
+  </div>
+</div>
 
 <div class="board" id="board"></div>
 
+</div>
+
+<!-- POPUP -->
 <div id="popup">
   <div id="question"></div>
   <div id="answer"></div>
@@ -96,70 +174,89 @@ button {
 </div>
 
 <script>
+
+/* 🔐 LOGIN FUNCTION */
+function startGame() {
+  let t1 = document.getElementById("team1Input").value || "Team 1";
+  let t2 = document.getElementById("team2Input").value || "Team 2";
+
+  document.getElementById("name1").innerText = t1;
+  document.getElementById("name2").innerText = t2;
+
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("game").style.display = "block";
+}
+
+/* ➕ SCORE */
+function addScore(team, val) {
+  let el = document.getElementById(team === 1 ? "p1" : "p2");
+  el.innerText = parseInt(el.innerText) + val;
+}
+
+/* 🎮 GAME DATA */
 const gameData = {
   "Windows": [
-    {q:"What do you press to open Task Manager?", a:"Ctrl + Shift + Esc"},
-    {q:"What tool checks system files?", a:"sfc /scannow"},
-    {q:"Command to check IP?", a:"ipconfig"},
-    {q:"Used to uninstall programs?", a:"Control Panel / Settings"},
-    {q:"Blue screen error is called?", a:"BSOD"}
+    {q:"Shortcut for Task Manager?", a:"Ctrl + Shift + Esc"},
+    {q:"Fix system files command?", a:"sfc /scannow"},
+    {q:"Check IP command?", a:"ipconfig"},
+    {q:"Uninstall apps location?", a:"Settings / Control Panel"},
+    {q:"Blue screen called?", a:"BSOD"}
   ],
   "Hardware": [
-    {q:"What connects CPU to motherboard?", a:"Socket"},
-    {q:"Device that stores data long-term?", a:"Hard Drive / SSD"},
-    {q:"What powers the PC?", a:"Power Supply (PSU)"},
-    {q:"What cools the CPU?", a:"Fan / Heatsink"},
-    {q:"Memory used while running programs?", a:"RAM"}
+    {q:"Stores data permanently?", a:"SSD / HDD"},
+    {q:"Powers PC?", a:"PSU"},
+    {q:"Cools CPU?", a:"Fan"},
+    {q:"What is RAM?", a:"Temporary memory"},
+    {q:"Main board?", a:"Motherboard"}
   ],
   "Networking": [
-    {q:"What device connects networks?", a:"Router"},
-    {q:"What does DNS do?", a:"Converts domain to IP"},
-    {q:"What is 192.168.x.x?", a:"Private IP address"},
-    {q:"WiFi stands for?", a:"Wireless Fidelity"},
-    {q:"What checks connection to another device?", a:"Ping"}
+    {q:"Gives WiFi?", a:"Router"},
+    {q:"DNS does?", a:"Domain to IP"},
+    {q:"Checks connection?", a:"Ping"},
+    {q:"Private IP?", a:"192.168.x.x"},
+    {q:"ISP means?", a:"Internet Provider"}
   ],
   "Software": [
-    {q:"What is an OS?", a:"Operating System"},
-    {q:"Example of open-source OS?", a:"Linux"},
-    {q:"What is a bug?", a:"Error in code/software"},
-    {q:"What fixes bugs?", a:"Patch / Update"},
-    {q:"What is antivirus for?", a:"Remove malware"}
+    {q:"OS stands for?", a:"Operating System"},
+    {q:"Linux type?", a:"Open source"},
+    {q:"Bug is?", a:"Software error"},
+    {q:"Fix bugs?", a:"Patch"},
+    {q:"Antivirus does?", a:"Removes malware"}
   ],
   "Security": [
-    {q:"What is phishing?", a:"Fake emails stealing info"},
-    {q:"Strong password rule?", a:"Mix letters numbers symbols"},
-    {q:"What is malware?", a:"Malicious software"},
-    {q:"Two-factor authentication?", a:"Extra login security"},
-    {q:"What protects networks?", a:"Firewall"}
+    {q:"Phishing?", a:"Fake scam email"},
+    {q:"Malware?", a:"Bad software"},
+    {q:"Firewall?", a:"Protection system"},
+    {q:"2FA?", a:"Extra login step"},
+    {q:"Strong password?", a:"Mixed characters"}
   ]
 };
 
-let selectedAnswer = "";
-
+/* 📊 BUILD BOARD */
 function buildBoard() {
   const board = document.getElementById("board");
 
-  Object.keys(gameData).forEach(category => {
-    let catDiv = document.createElement("div");
-    catDiv.className = "category";
-    catDiv.innerText = category;
-    board.appendChild(catDiv);
+  Object.keys(gameData).forEach(cat => {
+    let c = document.createElement("div");
+    c.className = "category";
+    c.innerText = cat;
+    board.appendChild(c);
   });
 
   for (let i = 0; i < 5; i++) {
-    Object.keys(gameData).forEach(category => {
+    Object.keys(gameData).forEach(cat => {
       let cell = document.createElement("div");
       cell.className = "cell";
-      cell.innerText = "$" + ((i + 1) * 100);
+      cell.innerText = (i + 1) * 100;
 
       cell.onclick = function () {
         if (cell.classList.contains("used")) return;
 
-        let item = gameData[category][i];
+        let item = gameData[cat][i];
+
         document.getElementById("question").innerText = item.q;
         document.getElementById("answer").innerText = "Answer: " + item.a;
         document.getElementById("answer").style.display = "none";
-        selectedAnswer = item.a;
 
         document.getElementById("popup").style.display = "block";
         cell.classList.add("used");
@@ -170,10 +267,12 @@ function buildBoard() {
   }
 }
 
+/* ❌ CLOSE POPUP */
 function closePopup() {
   document.getElementById("popup").style.display = "none";
 }
 
+/* ⌨️ SPACEBAR SHOW ANSWER */
 document.addEventListener("keydown", function(e) {
   if (e.code === "Space") {
     document.getElementById("answer").style.display = "block";
