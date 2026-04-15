@@ -1,186 +1,146 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Heads Up Game</title>
+    <title>Tech Troubleshooting Jeopardy</title>
 
     <style>
         body {
             font-family: Arial;
-            background-color: #111;
+            background-color: #0a0a0a;
             color: white;
             text-align: center;
         }
 
-        .card {
-            background: #222;
-            margin: 40px auto;
-            padding: 30px;
-            width: 60%;
-            border-radius: 15px;
+        h1 {
+            color: gold;
         }
 
-        h1 { color: gold; }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 80%;
+            margin: auto;
+        }
 
-        #word {
-            font-size: 40px;
-            margin: 20px;
+        .cell {
+            background: #1e90ff;
+            padding: 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .cell:hover {
+            background: gold;
+            color: black;
+        }
+
+        .box {
+            margin: 20px auto;
+            width: 70%;
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
         }
 
         button {
             padding: 10px;
             margin: 5px;
-            width: 160px;
+            border-radius: 8px;
             border: none;
-            border-radius: 10px;
             cursor: pointer;
         }
 
-        .correct { background: green; }
-        .skip { background: red; }
-        .topic { background: blue; }
-        .difficulty { background: purple; }
+        .correct { background: green; color: white; }
+        .wrong { background: red; color: white; }
     </style>
 </head>
 
 <body>
 
-<h1>🎮 Heads Up Game</h1>
+<h1>💻 Tech Troubleshooting Jeopardy</h1>
 
-<div class="card">
+<h3 id="turn">Team 1 Turn</h3>
 
-    <h2>Select Topic</h2>
-    <button class="topic" onclick="setTopic('anime')">🎌 Anime</button>
-    <button class="topic" onclick="setTopic('cartoons')">📺 Cartoons</button>
-    <button class="topic" onclick="setTopic('games')">🎮 Games</button>
+<div class="board">
 
-    <h2>Select Difficulty</h2>
-    <button class="difficulty" onclick="setDifficulty('easy')">Easy</button>
-    <button class="difficulty" onclick="setDifficulty('medium')">Medium</button>
-    <button class="difficulty" onclick="setDifficulty('hard')">Hard</button>
-    <button class="difficulty" onclick="setDifficulty('extreme')">Extra Hard</button>
+    <div class="cell" onclick="select(0)">Network<br>$100</div>
+    <div class="cell" onclick="select(1)">Hardware<br>$100</div>
+    <div class="cell" onclick="select(2)">Software<br>$100</div>
+    <div class="cell" onclick="select(3)">Security<br>$100</div>
 
-    <h2 id="teamTurn">Pick topic & difficulty</h2>
+    <div class="cell" onclick="select(4)">Network<br>$200</div>
+    <div class="cell" onclick="select(5)">Hardware<br>$200</div>
+    <div class="cell" onclick="select(6)">Software<br>$200</div>
+    <div class="cell" onclick="select(7)">Security<br>$200</div>
 
-    <div id="word">---</div>
-
-    <button onclick="startTurn()">Start Turn</button><br>
-
-    <button class="correct" onclick="correct()">✅ Correct</button>
-    <button class="skip" onclick="skip()">⏭️ Skip</button>
-
-    <h3 id="scores">Team 1: 0 | Team 2: 0</h3>
-    <h2 id="winner"></h2>
+    <div class="cell" onclick="select(8)">Network<br>$300</div>
+    <div class="cell" onclick="select(9)">Hardware<br>$300</div>
+    <div class="cell" onclick="select(10)">Software<br>$300</div>
+    <div class="cell" onclick="select(11)">Security<br>$300</div>
 
 </div>
 
-<script>
-let data = {
-    anime: {
-        easy: ["Naruto", "Goku", "Luffy"],
-        medium: ["Sasuke", "Vegeta", "Zoro"],
-        hard: ["Itadori", "Killua", "Eren Yeager"],
-        extreme: ["Gojo Satoru", "Hisoka", "Kaneki Ken"]
-    },
-    cartoons: {
-        easy: ["SpongeBob", "Scooby-Doo", "Tom"],
-        medium: ["Ben 10", "Finn", "Gumball"],
-        hard: ["Danny Phantom", "Samurai Jack", "Aang"],
-        extreme: ["Courage", "Mordecai", "Rick Sanchez"]
-    },
-    games: {
-        easy: ["Mario", "Minecraft", "Roblox"],
-        medium: ["Fortnite", "Zelda", "Pokemon"],
-        hard: ["Kratos", "Master Chief", "Geralt"],
-        extreme: ["Sekiro", "Solid Snake", "Arthur Morgan"]
-    }
-};
+<div class="box">
+    <h2 id="question">Pick a box to start</h2>
 
-let currentTopic = "";
-let currentDifficulty = "";
+    <button class="correct" onclick="correct()">Correct</button>
+    <button class="wrong" onclick="wrong()">Wrong</button>
+
+    <h3 id="score">Team 1: 0 | Team 2: 0</h3>
+</div>
+
+<script>
 let team = 1;
 let score1 = 0;
 let score2 = 0;
-let timer;
-let timeLeft = 30;
+let currentValue = 0;
 
-function setTopic(topic) {
-    currentTopic = topic;
-    updateStatus();
-}
+let questions = [
+    "What should you do if WiFi is not working? (Restart router)",
+    "What fixes a frozen computer? (Restart system)",
+    "What causes slow PC? (Too many apps running)",
+    "What is phishing? (Fake emails stealing info)",
 
-function setDifficulty(level) {
-    currentDifficulty = level;
-    updateStatus();
-}
+    "Why won’t a printer print? (No connection/paper)",
+    "What is a hardware issue? (Broken physical part)",
+    "What does RAM do? (Temporary memory)",
+    "What is a virus? (Malicious software)",
 
-function updateStatus() {
-    document.getElementById("teamTurn").innerText =
-        "Topic: " + currentTopic + " | Difficulty: " + currentDifficulty;
-}
+    "What fixes app crashing? (Update/reinstall app)",
+    "What is safe mode? (Diagnostic startup mode)",
+    "What is cache? (Temporary stored data)",
+    "How to remove malware? (Antivirus scan)"
+];
 
-function startTurn() {
-    if (!currentTopic || !currentDifficulty) {
-        alert("Pick topic AND difficulty!");
-        return;
-    }
+function select(index) {
+    document.getElementById("question").innerText = questions[index];
 
-    document.getElementById("winner").innerText = "";
-    document.getElementById("teamTurn").innerText = "Team " + team + " Turn";
-
-    timeLeft = 30;
-    nextWord();
-
-    timer = setInterval(() => {
-        timeLeft--;
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            switchTeam();
-        }
-    }, 1000);
-}
-
-function nextWord() {
-    let words = data[currentTopic][currentDifficulty];
-    let randomIndex = Math.floor(Math.random() * words.length);
-    document.getElementById("word").innerText = words[randomIndex];
+    if (index < 4) currentValue = 100;
+    else if (index < 8) currentValue = 200;
+    else currentValue = 300;
 }
 
 function correct() {
-    if (team === 1) score1++;
-    else score2++;
+    if (team === 1) score1 += currentValue;
+    else score2 += currentValue;
 
-    updateScores();
-    nextWord();
+    nextTurn();
 }
 
-function skip() {
-    nextWord();
+function wrong() {
+    nextTurn();
 }
 
-function updateScores() {
-    document.getElementById("scores").innerText =
+function nextTurn() {
+    team = team === 1 ? 2 : 1;
+
+    document.getElementById("turn").innerText = "Team " + team + " Turn";
+    document.getElementById("score").innerText =
         "Team 1: " + score1 + " | Team 2: " + score2;
-}
 
-function switchTeam() {
-    if (team === 1) {
-        team = 2;
-        document.getElementById("word").innerText = "Switch to Team 2!";
-    } else {
-        endGame();
-    }
-}
-
-function endGame() {
-    document.getElementById("word").innerText = "Game Over";
-
-    if (score1 > score2) {
-        document.getElementById("winner").innerText = "🏆 Team 1 Wins!";
-    } else if (score2 > score1) {
-        document.getElementById("winner").innerText = "🏆 Team 2 Wins!";
-    } else {
-        document.getElementById("winner").innerText = "It's a Tie!";
-    }
+    document.getElementById("question").innerText = "Pick another box";
 }
 </script>
 
