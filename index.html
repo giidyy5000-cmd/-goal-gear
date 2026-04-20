@@ -1,285 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>CompTIA 1201 Software Troubleshooting Jeopardy</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heads Up! Word Challenge</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --anime-pink: #ff61d8;
+            --cartoon-blue: #4db8ff;
+            --game-green: #4caf50;
+            --easy: #2ecc71;
+            --medium: #f1c40f;
+            --hard: #e67e22;
+            --extreme: #e74c3c;
+            --gradient: linear-gradient(90deg, #ff00cc, #3333ff);
+        }
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg, #141e30, #243b55);
-  color: white;
-  text-align: center;
-}
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
 
-/* LOGIN SCREEN */
-#loginScreen {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: #0b0f1a;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
 
-.login-box {
-  background: rgba(255,255,255,0.08);
-  padding: 25px;
-  border-radius: 12px;
-}
+        h1 {
+            font-size: 3rem;
+            font-style: italic;
+            text-transform: uppercase;
+            background: linear-gradient(to bottom, #ff61d8, #4db8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
 
-input {
-  padding: 10px;
-  margin: 5px;
-  border-radius: 6px;
-  border: none;
-}
+        .sub-header {
+            color: #aaa;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
 
-/* GAME */
-#game {
-  display: none;
-}
+        h3 {
+            text-align: left;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            color: #eee;
+            margin-top: 20px;
+        }
 
-h1 {
-  margin: 10px;
-}
+        /* Selection Grids */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-/* SCOREBOARD */
-.scoreboard {
-  display: flex;
-  justify-content: center;
-  gap: 60px;
-  font-size: 1.2em;
-  margin: 10px;
-}
+        .difficulty-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
 
-.team-box {
-  background: rgba(255,255,255,0.1);
-  padding: 10px;
-  border-radius: 10px;
-  min-width: 180px;
-}
+        .option {
+            background: var(--card-bg);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
 
-button {
-  margin: 3px;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+        /* Specific Colors */
+        .option[data-type="anime"].active { border-color: var(--anime-pink); color: var(--anime-pink); box-shadow: 0 0 10px var(--anime-pink); }
+        .option[data-type="cartoons"].active { border-color: var(--cartoon-blue); color: var(--cartoon-blue); box-shadow: 0 0 10px var(--cartoon-blue); }
+        .option[data-type="games"].active { border-color: var(--game-green); color: var(--game-green); box-shadow: 0 0 10px var(--game-green); }
+        
+        .diff.active { border-color: white; }
+        .diff[data-val="easy"].active { color: var(--easy); border-color: var(--easy); }
+        .diff[data-val="medium"].active { color: var(--medium); border-color: var(--medium); }
+        .diff[data-val="hard"].active { color: var(--hard); border-color: var(--hard); }
+        .diff[data-val="extreme"].active { color: var(--extreme); border-color: var(--extreme); }
 
-.plus { background: #00c853; color: white; }
-.minus { background: #d50000; color: white; }
+        .time-option.active { border-color: #a855f7; color: #a855f7; }
 
-/* BOARD */
-.board {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  padding: 20px;
-  max-width: 1000px;
-  margin: auto;
-}
+        /* Start Button */
+        .start-btn {
+            width: 100%;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 15px;
+            border: none;
+            background: var(--gradient);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 0, 204, 0.4);
+        }
 
-.category {
-  background: linear-gradient(45deg, #ff9800, #ff5722);
-  padding: 10px;
-  font-weight: bold;
-  border-radius: 8px;
-}
+        /* Game Screen */
+        #game-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
 
-.cell {
-  background: linear-gradient(45deg, #2196f3, #00bcd4);
-  padding: 25px;
-  border-radius: 10px;
-  cursor: pointer;
-}
+        .word-display {
+            font-size: 4rem;
+            font-weight: 900;
+            text-align: center;
+            margin: 20px;
+        }
 
-.cell.used {
-  background: gray;
-  pointer-events: none;
-}
-
-/* POPUP */
-#popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #111;
-  padding: 25px;
-  border-radius: 10px;
-  width: 60%;
-  display: none;
-  z-index: 5;
-}
-
-#answer {
-  margin-top: 15px;
-  color: #00ffcc;
-  display: none;
-}
-</style>
+        .team-indicator {
+            font-size: 1.5rem;
+            color: #ff61d8;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- 🔐 LOGIN -->
-<div id="loginScreen">
-  <h1>🔐 CompTIA Jeopardy Login</h1>
+<div class="container" id="setup-screen">
+    <h1>HEADS UP!</h1>
+    <div class="sub-header">🎮 TWO TEAM WORD CHALLENGE</div>
 
-  <div class="login-box">
-    <input id="team1Input" placeholder="Enter Team 1 Name">
-    <br>
-    <input id="team2Input" placeholder="Enter Team 2 Name">
-    <br><br>
-    <button onclick="startGame()">Start Game</button>
-  </div>
+    <h3>🎯 CHOOSE CATEGORY</h3>
+    <div class="grid">
+        <div class="option active" data-type="anime" onclick="select('cat', this)">🌸<br>ANIME</div>
+        <div class="option" data-type="cartoons" onclick="select('cat', this)">📺<br>CARTOONS</div>
+        <div class="option" data-type="games" onclick="select('cat', this)">🎮<br>GAMES</div>
+    </div>
+
+    <h3>⚡ DIFFICULTY</h3>
+    <div class="grid difficulty-grid">
+        <div class="option diff active" data-val="easy" onclick="select('diff', this)">⭐<br>EASY</div>
+        <div class="option diff" data-val="medium" onclick="select('diff', this)">⭐⭐<br>MEDIUM</div>
+        <div class="option diff" data-val="hard" onclick="select('diff', this)">⭐⭐⭐<br>HARD</div>
+        <div class="option diff" data-val="extreme" onclick="select('diff', this)">💀💀<br>EXTREME</div>
+    </div>
+
+    <h3>⏱️ TIMER</h3>
+    <div class="grid difficulty-grid">
+        <div class="option time-option" onclick="select('time', this)">30s</div>
+        <div class="option time-option active" onclick="select('time', this)">60s</div>
+        <div class="option time-option" onclick="select('time', this)">90s</div>
+        <div class="option time-option" onclick="select('time', this)">2min</div>
+    </div>
+
+    <button class="start-btn" onclick="startGame()">🚀 START GAME!</button>
 </div>
 
-<!-- 🎮 GAME -->
-<div id="game">
-
-<h1>💻 CompTIA 1201 Software Troubleshooting Jeopardy</h1>
-
-<div class="scoreboard">
-  <div class="team-box">
-    <div id="name1">Team 1</div>
-    Score: <span id="p1">0</span><br>
-    <button class="plus" onclick="addScore(1,100)">+100</button>
-    <button class="minus" onclick="addScore(1,-100)">-100</button>
-  </div>
-
-  <div class="team-box">
-    <div id="name2">Team 2</div>
-    Score: <span id="p2">0</span><br>
-    <button class="plus" onclick="addScore(1,100)">+100</button>
-    <button class="minus" onclick="addScore(1,-100)">-100</button>
-  </div>
-</div>
-
-<div class="board" id="board"></div>
-
-</div>
-
-<!-- POPUP -->
-<div id="popup">
-  <div id="question"></div>
-  <div id="answer"></div>
-  <button onclick="closePopup()">Close</button>
+<div id="game-screen">
+    <div id="team-turn" class="team-indicator">TEAM 1 TURN</div>
+    <div id="timer-display" style="font-size: 2rem;">60</div>
+    <div class="word-display" id="word-box">READY?</div>
+    <button class="start-btn" style="width: 200px;" onclick="nextWord()">NEXT WORD</button>
+    <button onclick="location.reload()" style="background:none; border:none; color: gray; margin-top: 20px; cursor: pointer;">QUIT</button>
 </div>
 
 <script>
+    const data = {
+        anime: {
+            easy: ["Naruto", "Goku", "Pikachu"],
+            medium: ["Luffy", "Tanjiro", "Sailor Moon"],
+            hard: ["Edward Elric", "Spike Spiegel", "Light Yagami"],
+            extreme: ["Guts", "Madoka Kaname", "Lelouch"]
+        },
+        cartoons: {
+            easy: ["Mickey Mouse", "SpongeBob", "Bugs Bunny"],
+            medium: ["Finn the Human", "Danny Phantom", "Scooby-Doo"],
+            hard: ["Rick Sanchez", "Bojack Horseman", "Kim Possible"],
+            extreme: ["Bill Cipher", "Courage the Cowardly Dog", "Aku"]
+        },
+        games: {
+            easy: ["Mario", "Pac-Man", "Tetris"],
+            medium: ["Master Chief", "Link", "Sonic"],
+            hard: ["Kratos", "Geralt of Rivia", "Solid Snake"],
+            extreme: ["Malenia", "Sans", "Arthas Menethil"]
+        }
+    };
 
-/* 🔐 LOGIN FUNCTION */
-function startGame() {
-  let t1 = document.getElementById("team1Input").value || "Team 1";
-  let t2 = document.getElementById("team2Input").value || "Team 2";
+    let selectedCat = 'anime';
+    let selectedDiff = 'easy';
+    let currentTeam = 1;
 
-  document.getElementById("name1").innerText = t1;
-  document.getElementById("name2").innerText = t2;
+    function select(group, element) {
+        // Remove active class from siblings
+        let parent = element.parentElement;
+        Array.from(parent.children).forEach(child => child.classList.remove('active'));
+        element.classList.add('active');
 
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("game").style.display = "block";
-}
+        // Update values
+        if(group === 'cat') selectedCat = element.getAttribute('data-type');
+        if(group === 'diff') selectedDiff = element.getAttribute('data-val');
+    }
 
-/* ➕ SCORE */
-function addScore(team, val) {
-  let el = document.getElementById(team === 1 ? "p1" : "p2");
-  el.innerText = parseInt(el.innerText) + val;
-}
+    function startGame() {
+        document.getElementById('setup-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'flex';
+        document.getElementById('team-turn').innerText = "TEAM " + currentTeam + " TURN";
+        nextWord();
+    }
 
-/* 🎮 GAME DATA */
-const gameData = {
-  "Windows": [
-    {q:"Shortcut for Task Manager?", a:"Ctrl + Shift + Esc"},
-    {q:"Fix system files command?", a:"sfc /scannow"},
-    {q:"Check IP command?", a:"ipconfig"},
-    {q:"Uninstall apps location?", a:"Settings / Control Panel"},
-    {q:"Blue screen called?", a:"BSOD"}
-  ],
-  "Hardware": [
-    {q:"Stores data permanently?", a:"SSD / HDD"},
-    {q:"Powers PC?", a:"PSU"},
-    {q:"Cools CPU?", a:"Fan"},
-    {q:"What is RAM?", a:"Temporary memory"},
-    {q:"Main board?", a:"Motherboard"}
-  ],
-  "Networking": [
-    {q:"Gives WiFi?", a:"Router"},
-    {q:"DNS does?", a:"Domain to IP"},
-    {q:"Checks connection?", a:"Ping"},
-    {q:"Private IP?", a:"192.168.x.x"},
-    {q:"ISP means?", a:"Internet Provider"}
-  ],
-  "Software": [
-    {q:"OS stands for?", a:"Operating System"},
-    {q:"Linux type?", a:"Open source"},
-    {q:"Bug is?", a:"Software error"},
-    {q:"Fix bugs?", a:"Patch"},
-    {q:"Antivirus does?", a:"Removes malware"}
-  ],
-  "Security": [
-    {q:"Phishing?", a:"Fake scam email"},
-    {q:"Malware?", a:"Bad software"},
-    {q:"Firewall?", a:"Protection system"},
-    {q:"2FA?", a:"Extra login step"},
-    {q:"Strong password?", a:"Mixed characters"}
-  ]
-};
-
-/* 📊 BUILD BOARD */
-function buildBoard() {
-  const board = document.getElementById("board");
-
-  Object.keys(gameData).forEach(cat => {
-    let c = document.createElement("div");
-    c.className = "category";
-    c.innerText = cat;
-    board.appendChild(c);
-  });
-
-  for (let i = 0; i < 5; i++) {
-    Object.keys(gameData).forEach(cat => {
-      let cell = document.createElement("div");
-      cell.className = "cell";
-      cell.innerText = (i + 1) * 100;
-
-      cell.onclick = function () {
-        if (cell.classList.contains("used")) return;
-
-        let item = gameData[cat][i];
-
-        document.getElementById("question").innerText = item.q;
-        document.getElementById("answer").innerText = "Answer: " + item.a;
-        document.getElementById("answer").style.display = "none";
-
-        document.getElementById("popup").style.display = "block";
-        cell.classList.add("used");
-      };
-
-      board.appendChild(cell);
-    });
-  }
-}
-
-/* ❌ CLOSE POPUP */
-function closePopup() {
-  document.getElementById("popup").style.display = "none";
-}
-
-/* ⌨️ SPACEBAR SHOW ANSWER */
-document.addEventListener("keydown", function(e) {
-  if (e.code === "Space") {
-    document.getElementById("answer").style.display = "block";
-  }
-});
-
-buildBoard();
+    function nextWord() {
+        const words = data[selectedCat][selectedDiff];
+        const randomWord = words[Math.floor(Math.random() * words.length)];
+        document.getElementById('word-box').innerText = randomWord;
+    }
 </script>
 
 </body>
